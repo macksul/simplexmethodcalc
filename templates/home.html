@@ -1,36 +1,98 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Calculator</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+  <title>Simplex Method Interface</title>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Calculator</h1>
-        <div class="calculator">
-            <input class="display" type="text" readonly>
-            <button>7</button>
-            <button>8</button>
-            <button>9</button>
-            <button>+</button>
-            <button>4</button>
-            <button>5</button>
-            <button>6</button>
-            <button>-</button>
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>*</button>
-            <button>0</button>
-            <button>.</button>
-            <button>=</button>
-            <button>/</button>
-            <button class="clear">C</button>
-        </div>
-    </div>
+  <h2>Simplex Method Interface</h2>
 
+  <form id="input-form">
+    <label for="num-variables">Number of Variables:</label>
+    <input type="number" id="num-variables" min="1" required>
+    <br>
+    <label for="num-constraints">Number of Constraints:</label>
+    <input type="number" id="num-constraints" min="1" required>
+    <br>
+    <input type="submit" value="Generate Table">
+  </form>
 
+  <table id="simplex-table">
+    <thead>
+      <tr>
+        <th>Basic Variable</th>
+        <th>Row</th>
+        <th>Z</th>
+        <th>RHS</th>
+        <th>Ratio</th>
+        <th>Row Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    document.getElementById('input-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      var numVariables = parseInt(document.getElementById('num-variables').value);
+      var numConstraints = parseInt(document.getElementById('num-constraints').value);
+
+      generateTable(numVariables, numConstraints);
+    });
+
+    function generateTable(numVariables, numConstraints) {
+      var table = document.getElementById('simplex-table');
+      var tbody = table.getElementsByTagName('tbody')[0];
+
+      // Clear the existing table rows
+      tbody.innerHTML = '';
+
+      // Generate table rows based on constraints
+      for (var j = 1; j <= numConstraints; j++) {
+        var row = document.createElement('tr');
+
+        // Create cells for each column
+        var basicVariableCell = document.createElement('td');
+        basicVariableCell.setAttribute('contenteditable', 'true');
+        row.appendChild(basicVariableCell);
+
+        var rowCell = document.createElement('td');
+        rowCell.setAttribute('contenteditable', 'true');
+        row.appendChild(rowCell);
+
+        var zCell = document.createElement('td');
+        zCell.setAttribute('contenteditable', 'true');
+        row.appendChild(zCell);
+
+        // Generate variable cells
+        for (var i = 1; i <= numVariables; i++) {
+          var variableCell = document.createElement('td');
+          variableCell.setAttribute('contenteditable', 'true');
+          row.appendChild(variableCell);
+        }
+
+        var rhsCell = document.createElement('td');
+        rhsCell.setAttribute('contenteditable', 'true');
+        row.appendChild(rhsCell);
+
+        var ratioCell = document.createElement('td');
+        ratioCell.setAttribute('contenteditable', 'true');
+        row.appendChild(ratioCell);
+
+        var operationsCell = document.createElement('td');
+        operationsCell.setAttribute('contenteditable', 'true');
+        row.appendChild(operationsCell);
+
+        tbody.appendChild(row);
+      }
+    }
+  </script>
+</body>
 </html>
+
+
+
+
+
+
