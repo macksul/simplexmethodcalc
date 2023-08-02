@@ -1,23 +1,6 @@
 import sys
 import numpy as np
 
-def main():
-    print("""
-    SIMPLEX METHOD CALCULATOR
-
-What type of problem do you want to solve?	
-    1: Maximization (<=)
-    2: Minimization (>=)
-    """)
-    try:
-        prob_type = int(input("Enter the problem type number: "))
-    except ValueError:
-        print("Please enter a number from the choices above.")
-        prob_type = int(input("Enter the problem type number: "))
-
-    if prob_type != 1 and prob_type != 2:
-        sys.exit("You entered a wrong problem choice ->" + str(prob_type))
-
 def get_tableau_from_user():
     m = int(input("Enter the number of constraints: "))
     n = int(input("Enter the number of variables: "))
@@ -127,18 +110,16 @@ What type of problem do you want to solve?
     print("Initial Tableau:")
     print(tableau)
 
-    while not is_optimal(tableau[0]):
-        pivot_col_idx = pivot_column_index(tableau[0])
-        pivot_row_idx = pivot_row_index(tableau, pivot_col_idx)
+    pivot_col_idx = pivot_column_index(tableau[0])
+    pivot_row_idx = pivot_row_index(tableau, pivot_col_idx)
 
-        if np.isinf(pivot_row_idx):
-            sys.exit("The problem is unbounded.")
+    if np.isinf(pivot_row_idx):
+        sys.exit("The problem is unbounded.")
 
-        print("\nPivoting around (Row, Column):", (pivot_row_idx, pivot_col_idx))
-        simplex_iteration(tableau, pivot_row_idx, pivot_col_idx)
-        print("Next Iteration Tableau:")
-        print(tableau)
+    print("\nPivoting around (Row, Column):", (pivot_row_idx, pivot_col_idx))
+    simplex_iteration(tableau, pivot_row_idx, pivot_col_idx)
+    print("Next Iteration Tableau:")
+    print(tableau)
 
 if __name__ == "__main__":
     main()
-

@@ -32,3 +32,21 @@ def get_slack_excess_variables():
     except ValueError:
         print("Invalid input. Please enter valid integer values.")
         return get_slack_excess_variables()
+def get_z_row_values(num_variables):
+    z_row = []
+    for i in range(num_variables):
+        try:
+            coefficient = float(input(f"Enter the coefficient for variable X{i + 1}: "))
+            z_row.append(coefficient)
+        except ValueError:
+            print("Invalid input. Please enter valid numeric values.")
+            return get_z_row_values(num_variables)
+    return z_row
+
+if __name__ == "__main__":
+    try:
+        num_variables = int(input("Enter the number of variables in the Z-row: "))
+        z_row_values = get_z_row_values(num_variables)
+        print("Z-row values:", z_row_values)
+    except ValueError:
+        print("Invalid input. Please enter a valid integer for the number of variables.")
