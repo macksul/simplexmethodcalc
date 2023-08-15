@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simplex Method Calculator</title>
+</head>
+<body>
+  <h2>Simplex Method Calculator</h2>
+
+  <form id="input-form">
+    <label for="num-variables">Number of Decision Variables:</label>
+    <input type="number" id="num-variables" min="1" required>
+    <br>
+    <label for="num-slack-variables">Number of Slack Variables:</label>
+    <input type="number" id="num-slack-variables" min="0" required>
+    <br>
+    <label for="num-excess-variables">Number of Excess Variables:</label>
+    <input type="number" id="num-excess-variables" min="0" required>
+    <br>
+    <input type="submit" value="Generate Table">
+  </form>
+
+  <table id="simplex-table">
+    <thead>
+      <tr>
+        <th>Row</th>
+        <th>Z</th>
+        <th>Decision Variables</th>
+        <th>RHS</th>
+        <th>Row Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    document.getElementById('input-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      var numVariables = parseInt(document.getElementById('num-variables').value);
+      var numSlackVariables = parseInt(document.getElementById('num-slack-variables').value);
+      var numExcessVariables = parseInt(document.getElementById('num-excess-variables').value);
+
+      generateTable(numVariables, numSlackVariables, numExcessVariables);
+    });
+
+    function generateTable(numVariables, numSlackVariables, numExcessVariables) {
+      // Calculate the total number of constraints
+      var numConstraints = numSlackVariables + numExcessVariables;
+
+      var table = document.getElementById('simplex-table');
+      var tbody = table.getElementsByTagName('tbody')[0];
+
+      // Clear the existing table rows
+      tbody.innerHTML = '';
+
+      // Calculate the total number of columns
+      var cols = numVariables + 3; // Z, Decision Variables, and RHS
+
+      // Generate table rows based on constraints
+      for (var rows = 1; rows <= numConstraints; rows++) {
+        var newRow = document.createElement('tr');
+
+        // Create cells for each required column
+        var rowNumberCell = document.createElement('td');
+        rowNumberCell.textContent = rows;
+        newRow.appendChild(rowNumberCell);
+
+        var zCell = document.createElement('td');
+        zCell.setAttribute('contenteditable', 'true');
+        newRow.appendChild(zCell);
+
+        // Generate decision variable cells
+        for (var i = 1; i <= numVariables; i++) {
+          var variableCell = document.createElement('td');
+          variableCell.setAttribute('contenteditable', 'true');
+          newRow.appendChild(variableCell);
+        }
+
+        var rhsCell = document.createElement('td');
+        rhsCell.setAttribute('contenteditable', 'true');
+        newRow.appendChild(rhsCell);
+
+        var operationsCell = document.createElement('td');
+        operationsCell.setAttribute('contenteditable', 'true');
+        newRow.appendChild(operationsCell);
+
+        tbody.appendChild(newRow);
+      }
+    }
+  </script>
+</body>
+</html>
