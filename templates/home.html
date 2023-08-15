@@ -1,98 +1,114 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Simplex Method Interface</title>
-</head>
-<body>
-  <h2>Simplex Method Interface</h2>
-
-  <form id="input-form">
-    <label for="num-variables">Number of Variables:</label>
-    <input type="number" id="num-variables" min="1" required>
-    <br>
-    <label for="num-constraints">Number of Constraints:</label>
-    <input type="number" id="num-constraints" min="1" required>
-    <br>
-    <input type="submit" value="Generate Table">
-  </form>
-
-  <table id="simplex-table">
-    <thead>
-      <tr>
-        <th>Basic Variable</th>
-        <th>Row</th>
-        <th>Z</th>
-        <th>RHS</th>
-        <th>Ratio</th>
-        <th>Row Operations</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
-
+  <title>Simplex Method Calculator</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <script>
-    document.getElementById('input-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+    function generateTable(dec_vars, slack_vars, excess_vars) {
+      var n_rows = 1 + slack_vars + excess_vars;
 
-      var numVariables = parseInt(document.getElementById('num-variables').value);
-      var numConstraints = parseInt(document.getElementById('num-constraints').value);
-
-      generateTable(numVariables, numConstraints);
-    });
-
-    function generateTable(numVariables, numConstraints) {
       var table = document.getElementById('simplex-table');
       var tbody = table.getElementsByTagName('tbody')[0];
 
-      // Clear the existing table rows
       tbody.innerHTML = '';
 
-      // Generate table rows based on constraints
-      for (var j = 1; j <= numConstraints; j++) {
-        var row = document.createElement('tr');
+      var n_cols = 1 + dec_vars + slack_vars + excess_vars + 1; // Z and RHS (add Row Ops)
 
-        // Create cells for each column
-        var basicVariableCell = document.createElement('td');
-        basicVariableCell.setAttribute('contenteditable', 'true');
-        row.appendChild(basicVariableCell);
+      for (var row = 1; row <= n_rows; row++) {
+        var newRow = document.createElement('tr');
 
-        var rowCell = document.createElement('td');
-        rowCell.setAttribute('contenteditable', 'true');
-        row.appendChild(rowCell);
+        var rowNumberCell = document.createElement('td');
+        rowNumberCell.textContent = row;
+        newRow.appendChild(rowNumberCell);
 
         var zCell = document.createElement('td');
         zCell.setAttribute('contenteditable', 'true');
-        row.appendChild(zCell);
+        newRow.appendChild(zCell);
 
-        // Generate variable cells
-        for (var i = 1; i <= numVariables; i++) {
+        for (var i = 1; i <= n_cols; i++) {
           var variableCell = document.createElement('td');
           variableCell.setAttribute('contenteditable', 'true');
-          row.appendChild(variableCell);
+          newRow.appendChild(variableCell);
         }
 
         var rhsCell = document.createElement('td');
         rhsCell.setAttribute('contenteditable', 'true');
-        row.appendChild(rhsCell);
-
-        var ratioCell = document.createElement('td');
-        ratioCell.setAttribute('contenteditable', 'true');
-        row.appendChild(ratioCell);
+        newRow.appendChild(rhsCell);
 
         var operationsCell = document.createElement('td');
         operationsCell.setAttribute('contenteditable', 'true');
-        row.appendChild(operationsCell);
+        newRow.appendChild(operationsCell);
 
-        tbody.appendChild(row);
+        tbody.appendChild(newRow);
       }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('input-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var dec_vars = parseInt(document.getElementById('dec_vars').value);
+        var slack_vars = parseInt(document.getElementById('slack_vars').value);
+        var excess_vars = parseInt(document.getElementById('excess_vars').value);
+
+        generateTable(dec_vars, slack_vars, excess_vars);
+      });
+    });
   </script>
+</head>
+
+<body>
+  <h2>Simplex Method Calculator</h2>
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <form class="form-horizontal" id="input-form" method="post">
+        <div class="form-group">
+          <label class="control-label col-xs-3" for="dec_vars">Decision Variables :</label>
+          <div class="col-xs-7">
+            <input type="number" class="form-control" name="dec_vars" id="dec_vars" placeholder="&nbsp;0&nbsp;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-xs-3" for="slack_vars">Slack Variables :</label>
+          <div class="col-xs-7">
+            <input type="number" class="form-control" name="slack_vars" id="slack_vars" placeholder="&nbsp;0&nbsp;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-xs-3" for="excess_vars">Excess Variables :</label>
+          <div class="col-xs-7">
+            <input type="number" class="form-control" name="excess_vars" id="excess_vars" placeholder="&nbsp;0&nbsp;">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-offset-3 col-xs-9">
+            <input type="submit" class="btn btn-success" value="Submit">
+            <input type="reset" class="btn btn-danger" value="Reset">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table id="simplex-table" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Row</th>
+            <th>Z</th>
+            <!-- Add headers for variables, RHS, and operations here -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table rows will be generated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 </body>
+
 </html>
-
-
-
-
-
-

@@ -29,7 +29,7 @@ def get_tableau_from_user():
         rhs_value = float(input(f"Enter the RHS value for Row {i + 1}: "))
         tableau_row.append(rhs_value)
 
-        row_op = input(f"Enter the row operation for Row {i + 1} (e.g., '=', '<=', '>='): ")
+        row_op = input(f"Enter the row operation for Row {i + 1} ")
         tableau_row.append(row_op) 
 
         tableau.append(tableau_row)
@@ -68,3 +68,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Prompt user for the number of slack/excess variables instead of constraints
