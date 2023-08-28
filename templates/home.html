@@ -13,34 +13,67 @@
 
       tbody.innerHTML = '';
 
-      var n_cols = 1 + dec_vars + slack_vars + excess_vars + 1; // Z and RHS (add Row Ops)
+      var n_vars = dec_vars + slack_vars + excess_vars; // Z and RHS (add Row Ops)
 
-      for (var row = 1; row <= n_rows; row++) {
+      for (var row = 0; row <= n_rows; row++) {
         var newRow = document.createElement('tr');
 
-        var rowNumberCell = document.createElement('td');
-        rowNumberCell.textContent = row;
-        newRow.appendChild(rowNumberCell);
+        if (row == 0){
+          var rowNumberCell = document.createElement('td');
+          rowNumberCell.textContent = `Row`;
+          newRow.appendChild(rowNumberCell);
 
-        var zCell = document.createElement('td');
-        zCell.setAttribute('contenteditable', 'true');
-        newRow.appendChild(zCell);
+          var zCell = document.createElement('td');
+          zCell.textContent = `Z`;
+          newRow.appendChild(zCell);
 
-        for (var i = 1; i <= n_cols; i++) {
-          var variableCell = document.createElement('td');
-          variableCell.setAttribute('contenteditable', 'true');
-          newRow.appendChild(variableCell);
+          for (var dec_var = 1; dec_var <= dec_vars; dec_var++) {
+
+            var dec_varCell = document.createElement('td');
+            dec_varCell.textcontent = `x${dec_var}`;
+            newRow.appendChild(dec_varCell);
+          }
+
+          for (var slack_var = 1; slack_var <= slack_vars; slack_var++) {
+            
+            var slack_varCell = document.createElement('td');
+            slack_varCell.textContent = `s${slack_var}`;
+            newRow.appendChild(slack_varCell);
+          }
+          
+          for (var excess_var = 1; excess_var <= excess_vars; excess_var++) {
+            
+            var excess_varCell = document.createElement('td');
+            excess_varCell.textContent = `e${excess_var}`;
+            newRow.appendChild(excess_varCell); 
+          }
+
         }
+        else{
+          var rowNumberCell = document.createElement('td');
+          rowNumberCell.textContent = row;
+          newRow.appendChild(rowNumberCell);
 
-        var rhsCell = document.createElement('td');
-        rhsCell.setAttribute('contenteditable', 'true');
-        newRow.appendChild(rhsCell);
+          var zCell = document.createElement('td');
+          zCell.setAttribute('contenteditable', 'true');
+          newRow.appendChild(zCell);
 
-        var operationsCell = document.createElement('td');
-        operationsCell.setAttribute('contenteditable', 'true');
-        newRow.appendChild(operationsCell);
+          for (var i = 1; i <= n_vars; i++) {
+            var variableCell = document.createElement('td');
+            variableCell.setAttribute('contenteditable', 'true');
+            newRow.appendChild(variableCell);
+          }
 
-        tbody.appendChild(newRow);
+          var rhsCell = document.createElement('td');
+          rhsCell.setAttribute('contenteditable', 'true');
+          newRow.appendChild(rhsCell);
+
+          var operationsCell = document.createElement('td');
+          operationsCell.setAttribute('contenteditable', 'true');
+          newRow.appendChild(operationsCell);
+
+          tbody.appendChild(newRow);
+        }
       }
     }
 

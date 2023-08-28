@@ -70,3 +70,4 @@ if __name__ == "__main__":
     main()
 
     # Prompt user for the number of slack/excess variables instead of constraints
+
