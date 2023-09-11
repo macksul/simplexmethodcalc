@@ -75,13 +75,11 @@
           }
 
           var rhsCell = document.createElement('td');
-          // Inserting HTML input code in this td element
-          rhsCell.innerHTML = '<input type = "float" class="form-control" name="rhs" id="rhs" value = 0>';
+          rhsCell.setAttribute('contenteditable', 'true');
           newRow.appendChild(rhsCell);
 
           var operationsCell = document.createElement('td');
-          // Inserting HTML input code in this td element
-          operationsCell.innerHTML = '<input type = "string" class="form-control" name="row_ops" id="row_ops">';
+          operationsCell.setAttribute('contenteditable', 'true');
           newRow.appendChild(operationsCell);
 
         }
