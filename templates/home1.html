@@ -7,10 +7,15 @@
   <script>
     function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       var n_rows = 1 + slack_vars + excess_vars;
-      var table = document.getElementById('simplex-table');
-      var tbody = table.getElementsByTagName('tbody')[0];
-      var existingRows = tbody.getElementsByTagName('tr');
-      var n_existing_rows = existingRows.length;
+      var doc = document.getElementsByTagName('body')[0];
+      var div_row = document.createElement('div');
+      div_row.classList.add('row')
+      var div_size = document.createElement('div')
+      div_size.classList.add('col-md-12')
+      var table = document.createElement('table');
+      table.classList.add('table table-bordered')
+      var thead = document.createElement('thead')
+      var tbody = document.createElement('tbody')
 
       var n_vars = dec_vars + slack_vars + excess_vars;
 
@@ -51,7 +56,10 @@
 
           var operationsCell = document.createElement('td');
           operationsCell.textContent = "Row Operations";
-          newRow.appendChild(operationsCell); } 
+          newRow.appendChild(operationsCell);
+          thead.appendChild(newRow);
+          table.appendChild(thead);
+        } 
           
           else {
           // Create data rows
@@ -68,13 +76,6 @@
             variableCell.setAttribute('contenteditable', 'true');
             // Inserting HTML input code in this td element
             variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="">';
-            var existingRow = existingRows[row % n_existing_rows];
-            if (existingRow) {
-              var existingInput = existingRow.getElementsByTagName('input')[i];
-              if (existingInput) {
-                variableCell.innerHTML = existingInput.outerHTML;
-              }
-            }
             newRow.appendChild(variableCell);
           }
 
@@ -87,9 +88,18 @@
           // Inserting HTML input code in this td element
           operationsCell.innerHTML = '<input type="string" class="form-control" name="row_ops" id="row_ops">';
           newRow.appendChild(operationsCell);
+          tbody.appendChild(newRow);
         }
-        tbody.appendChild(newRow);
       }
+
+      table.appendChild(tbody);
+      div_size.appendChild(table);
+      div_row.appendChild(div_size);
+
+      var submitButton = document.createElement('div');
+      submitButton.innerHTML = '<input type="submit" class="btn btn-success" value="Submit"><input type="reset" class="btn btn-danger" value="Reset">'
+      div_row.appendChild(submitButton);
+      doc.appendChild(div_row);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -138,19 +148,6 @@
           </div>
         </div>
       </form>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <table id="simplex-table" class="table table-bordered">
-        <thead>
-          <!-- Table header will be generated here-->
-        </thead>
-        <tbody>
-          <!-- Table rows will be generated here -->
-        </tbody>
-      </table>
     </div>
   </div>
 </body>
