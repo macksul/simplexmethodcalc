@@ -7,6 +7,8 @@
   <script>
     // Initialize table_count to 0
     var table_count = 0;
+    // Stores table values for each iteration
+    var tableValues = {};
 
     function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       // Increment the table_count
@@ -92,13 +94,19 @@
           // Add event listeners to the submit and reset buttons
           submit_button.addEventListener('click', function () {
             storeTableValues(table_count);
+
+            var dec_vars = parseInt(document.getElementById('dec_vars').value);
+            var slack_vars = parseInt(document.getElementById('slack_vars').value);
+            var excess_vars = parseInt(document.getElementById('excess_vars').value);
+
+            generateTable(dec_vars, slack_vars, excess_vars);
           });
 
           reset_button.addEventListener('click', function () {
             // You can add reset functionality here if needed
           });
-        } 
-        
+        }
+
         else {
           var rowNumberCell = document.createElement('td');
           rowNumberCell.textContent = row - 1;
@@ -158,7 +166,37 @@
       }
 
       // Now the 'values' array contains the input values organized as a list of lists
-      console.log(`Table ${tableNumber} values:`, values);     
+      // console.log(`Table ${tableNumber} values:`, values);
+
+      // Stores table values for each iteration
+      tableValues[tableNumber] = values;
+      console.log(tableValues)
+    }
+
+    //function to fill table values
+    function fillTable(tableNumber) {
+      var tableId = `table-${tableNumber}`;
+      var table = document.getElementById(tableId);
+
+      if (!table) {
+        console.error(`Table with ID ${tableId} not found.`);
+        return;
+      }
+
+      var values = tableValues[tableNumber];
+
+      // Loop through the rows of the table
+      for (var row = 1; row < table.rows.length; row++) {
+        var rowData = values[row - 1];
+
+        // Loop through the cells of the row
+        for (var col = 1; col < table.rows[row].cells.length; col++) {
+          var cell = table.rows[row].cells[col];
+
+          // Assuming input elements are always used, set the input value
+          cell.querySelector('input').value = rowData[col - 1];
+        }
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
