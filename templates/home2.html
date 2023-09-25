@@ -93,13 +93,15 @@
 
           // Add event listeners to the submit and reset buttons
           submit_button.addEventListener('click', function () {
-            storeTableValues(table_count);
+            var table_id = submit_button.id.split('-')[1]
+            storeTableValues(table_id);
 
             var dec_vars = parseInt(document.getElementById('dec_vars').value);
             var slack_vars = parseInt(document.getElementById('slack_vars').value);
             var excess_vars = parseInt(document.getElementById('excess_vars').value);
 
-            generateTable(dec_vars, slack_vars, excess_vars);
+          if (table_id == table_count)
+            {generateTable(dec_vars, slack_vars, excess_vars);}
           });
 
           reset_button.addEventListener('click', function () {
