@@ -115,7 +115,21 @@
           newRow.appendChild(rowNumberCell);
 
           var zCell = document.createElement('td');
-          zCell.innerHTML = '<input type="float" class="form-control" name="z" id="z" value = "0">';
+          if (table_count == 1){
+            zCell.innerHTML = '<input type="float" class="form-control" name="z_' + i + '" id="z_' + i + '">';
+          }
+          else {
+            var row_ops = tableValues[table_count - 1][row - 1];
+            var row_op = row_ops[row_ops.length - 1]
+            var lastTable = tableValues[table_count - 1];
+            var resultArray = [];
+
+            for (let r = 0; r < lastTable.length; r++) {
+              resultArray.push(lastTable[r][0]);
+            }
+            zCell.innerHTML = parseString(row_op, resultArray)
+            console.log(row_op)
+          }
           newRow.appendChild(zCell);
 
           for (var i = 1; i <= n_vars; i++) {
@@ -126,11 +140,11 @@
           }
 
           var rhsCell = document.createElement('td');
-          rhsCell.innerHTML = '<input type="float" class="form-control" name="rhs" id="rhs" value="0">';
+          rhsCell.innerHTML = '<input type="float" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '">';
           newRow.appendChild(rhsCell);
 
           var operationsCell = document.createElement('td');
-          operationsCell.innerHTML = '<input type="string" class="form-control" name="row_ops" id="row_ops">';
+          operationsCell.innerHTML = '<input type="string" class="form-control" name="row_ops_' + i + '" id="row_ops_' + i + '">';
           newRow.appendChild(operationsCell);
         }
         tbody.appendChild(newRow);
@@ -174,6 +188,66 @@
       tableValues[tableNumber] = values;
       console.log(tableValues)
     }
+
+  function parseString(x, column) {
+  // First, determine if there is a coefficient by splitting the string x by '*'
+  var parts = x.split('*');
+  let coeff = 1.0; // If there is no coefficient, set it to 1.0
+
+  if (parts.length > 1) {
+    const coeffStr = parts[0].trim();
+    try {
+      coeff = parseFloat(coeffStr);
+    } catch (error) {
+      try {
+        coeff = eval(coeffStr);
+      } catch (error) {
+        throw new Error(`Invalid coefficient format: '${coeffStr}'`);
+      }
+    }
+  }
+
+  // Check if the first character is a negative symbol and adjust coeff if needed
+  if (parts[parts.length - 1][0] === '-') {
+    coeff *= -1; // Change the sign of the coefficient if there's a negative symbol
+  }
+
+  // Remove any negative symbols from the string
+  var rowString = parts[parts.length - 1].replace(/^-/, '');
+
+  // Split the rowString by '+' to identify the rows to be added
+  var rows = rowString.split('+');
+
+  // Initialize an array to store the actual rows from the column
+  var rowValues = [];
+
+  // Extract the rows from the column based on their labels
+  for (var row of rows) {
+    var rowLabel = row.trim(); // Remove any leading/trailing whitespace
+    if (rowLabel.startsWith('R')) {
+      var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
+      if (rowNumber >= 0 && rowNumber < column.length) {
+        rowValues.push(column[rowNumber]);
+      } else {
+        throw new Error(`Row label '${rowLabel}' is out of range.`);
+      }
+    } else {
+      throw new Error(`Invalid row label format: '${rowLabel}'`);
+    }
+  }
+
+  // Calculate the result based on the number of rows
+  let result;
+  if (rowValues.length === 1) {
+    result = coeff * rowValues[0];
+  } else if (rowValues.length === 2) {
+    result = coeff * rowValues[0] + rowValues[1];
+  } else {
+    throw new Error('Invalid row operation format');
+  }
+
+  return result;
+}
 
     //function to fill table values
     function fillTable(tableNumber) {
