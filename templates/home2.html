@@ -100,8 +100,7 @@
             var slack_vars = parseInt(document.getElementById('slack_vars').value);
             var excess_vars = parseInt(document.getElementById('excess_vars').value);
 
-          if (table_id == table_count)
-            {generateTable(dec_vars, slack_vars, excess_vars);}
+            if (table_id == table_count) { generateTable(dec_vars, slack_vars, excess_vars); }
           });
 
           reset_button.addEventListener('click', function () {
@@ -115,7 +114,7 @@
           newRow.appendChild(rowNumberCell);
 
           var zCell = document.createElement('td');
-          if (table_count == 1){
+          if (table_count == 1) {
             zCell.innerHTML = '<input type="float" class="form-control" name="z_' + i + '" id="z_' + i + '">';
           }
 
@@ -135,10 +134,10 @@
 
           for (var i = 1; i <= n_vars; i++) {
             var variableCell = document.createElement('td');
-            
+
             if (table_count == 1) {
               variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="">';
-            } 
+            }
 
             else {
               var row_ops = tableValues[table_count - 1][row - 1];
@@ -146,8 +145,10 @@
               var lastTable = tableValues[table_count - 1];
               var resultArray = [];
               for (let r = 0; r < lastTable.length; r++) {
-                resultArray.push(lastTable[r][0]);
+                resultArray.push(lastTable[r][i]);
               }
+              console.log(resultArray)
+              // Check with Dr. De Silva
               variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="' + parseString(row_op, resultArray) + '">';
             }
             newRow.appendChild(variableCell);
@@ -156,7 +157,7 @@
           var rhsCell = document.createElement('td');
           if (table_count == 1) {
             rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="">';
-          } 
+          }
 
           else {
             var row_ops = tableValues[table_count - 1][row - 1];
@@ -165,7 +166,7 @@
             var resultArray = [];
 
             for (let r = 0; r < lastTable.length; r++) {
-              resultArray.push(lastTable[r][0]);
+              resultArray.push(lastTable[r][lastTable[r].length - 2]);
             }
             rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="' + parseString(row_op, resultArray) + '">';
           }
@@ -218,65 +219,79 @@
       console.log(tableValues)
     }
 
-  function parseString(x, column) {
-  // First, determine if there is a coefficient by splitting the string x by '*'
-  var parts = x.split('*');
-  let coeff = 1.0; // If there is no coefficient, set it to 1.0
+    function parseString(x, column) {
+      // First, determine if there is a coefficient by splitting the string x by '*'
+      var parts = x.split('*');
+      let coeff = 1.0; // If there is no coefficient, set it to 1.0
 
-  if (parts.length > 1) {
-    const coeffStr = parts[0].trim();
-    try {
-      coeff = parseFloat(coeffStr);
-    } catch (error) {
-      try {
-        coeff = eval(coeffStr);
-      } catch (error) {
-        throw new Error(`Invalid coefficient format: '${coeffStr}'`);
+      if (parts.length > 1) {
+        const coeffStr = parts[0].trim();
+        try {
+          coeff = parseFloat(coeffStr);
+        } catch (error) {
+          try {
+            coeff = eval(coeffStr);
+          } catch (error) {
+            throw new Error(`Invalid coefficient format: '${coeffStr}'`);
+          }
+        }
       }
-    }
-  }
 
-  // Check if the first character is a negative symbol and adjust coeff if needed
-  if (parts[parts.length - 1][0] === '-') {
-    coeff *= -1; // Change the sign of the coefficient if there's a negative symbol
-  }
+      // Check if the first character is a negative symbol and adjust coeff if needed
+      if (parts[parts.length - 1][0] === '-') {
+        coeff *= -1; // Change the sign of the coefficient if there's a negative symbol
+      }
 
-  // Remove any negative symbols from the string
-  var rowString = parts[parts.length - 1].replace(/^-/, '');
+      check_minus = parts[parts.length - 1].split(/^-/, '')
+      if (check_minus.length == 2 && check_minus[0] != '') {
+        throw new Error('Invalid operation format, please use addition.')
+      }
 
-  // Split the rowString by '+' to identify the rows to be added
-  var rows = rowString.split('+');
+      // Remove any negative symbols from the string
+      var rowString = parts[parts.length - 1].replace(/^-/, '');
 
-  // Initialize an array to store the actual rows from the column
-  var rowValues = [];
+      // Split the rowString by '+' to identify the rows to be added
+      var rows = rowString.split('+');
 
-  // Extract the rows from the column based on their labels
-  for (var row of rows) {
-    var rowLabel = row.trim(); // Remove any leading/trailing whitespace
-    if (rowLabel.startsWith('R')) {
-      var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
-      if (rowNumber >= 0 && rowNumber < column.length) {
-        rowValues.push(column[rowNumber]);
+      // Initialize an array to store the actual rows from the column
+      var rowValues = [];
+
+      // Extract the rows from the column based on their labels
+      for (var row of rows) {
+        var rowLabel = row.trim(); // Remove any leading/trailing whitespace
+        if (rowLabel.startsWith('R')) {
+          var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
+          if (rowNumber >= 0 && rowNumber < column.length) {
+            rowValues.push(column[rowNumber]);
+          } else {
+            throw new Error(`Row label '${rowLabel}' is out of range.`);
+          }
+        } else {
+          throw new Error(`Invalid row label format: '${rowLabel}'`);
+        }
+      }
+
+      // Calculate the result based on the number of rows
+      let result;
+      if (rowValues.length === 1) {
+        result = coeff * rowValues[0];
+      } else if (rowValues.length === 2) {
+        result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
       } else {
-        throw new Error(`Row label '${rowLabel}' is out of range.`);
+        throw new Error('Invalid row operation format');
       }
-    } else {
-      throw new Error(`Invalid row label format: '${rowLabel}'`);
+
+      // Calculate the result based on the number of rows
+      if (rowValues.length === 1) {
+        result = coeff * rowValues[0];
+      } else if (rowValues.length === 2) {
+        result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
+      } else {
+        throw new Error('Invalid row operation format');
+      }
+
+      return result;
     }
-  }
-
-  // Calculate the result based on the number of rows
-  let result;
-  if (rowValues.length === 1) {
-    result = coeff * rowValues[0];
-  } else if (rowValues.length === 2) {
-    result = coeff * rowValues[0] + rowValues[1];
-  } else {
-    throw new Error('Invalid row operation format');
-  }
-
-  return result;
-}
 
     //function to fill table values
     function fillTable(tableNumber) {

@@ -5,7 +5,15 @@
   <title>Simplex Method Calculator</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <script>
+    // Initialize table_count to 0
+    var table_count = 0;
+    // Stores table values for each iteration
+    var tableValues = {};
+
     function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
+      // Increment the table_count
+      table_count++;
+
       var n_rows = 1 + slack_vars + excess_vars;
       var doc = document.getElementById('document-body');
       var div_row = document.createElement('div');
@@ -16,6 +24,7 @@
       div_row.appendChild(div_size);
       var table = document.createElement('table');
       table.setAttribute('class', 'table table-bordered');
+      table.setAttribute('id', `table-${table_count}`); // Set a unique table ID
       div_size.appendChild(table);
       var tbody = table.createTBody();
       var thead = table.createTHead();
@@ -25,8 +34,7 @@
       for (var row = 0; row <= n_rows; row++) {
         var newRow = document.createElement('tr');
 
-        if (row == 0){
-          // Create header row
+        if (row == 0) {
           var rowNumberCell = document.createElement('td');
           rowNumberCell.textContent = "Row";
           newRow.appendChild(rowNumberCell);
@@ -61,54 +69,199 @@
           operationsCell.textContent = "Row Operations";
           newRow.appendChild(operationsCell);
           thead.appendChild(newRow);
-        }      
-          else{
-          // Create data rows
+
+          // Add submit and reset buttons with IDs that include table_count
+          var buttons = document.createElement('div');
+          buttons.setAttribute('class', 'form-group');
+          buttons.setAttribute('id', `row-op-submit-${table_count}`);
+          doc.appendChild(buttons);
+          var buttons_size = document.createElement('div');
+          buttons_size.setAttribute('class', 'col-md-offset-6 col-md-12');
+          buttons.appendChild(buttons_size);
+          var submit_button = document.createElement('input');
+          submit_button.setAttribute('type', 'submit');
+          submit_button.setAttribute('class', 'btn btn-success');
+          submit_button.setAttribute('value', 'Submit');
+          submit_button.setAttribute('id', `submit-${table_count}`);
+          buttons_size.appendChild(submit_button);
+          var reset_button = document.createElement('input');
+          reset_button.setAttribute('type', 'reset');
+          reset_button.setAttribute('class', 'btn btn-danger');
+          reset_button.setAttribute('value', 'Reset');
+          reset_button.setAttribute('id', `reset-${table_count}`);
+          buttons_size.appendChild(reset_button);
+
+          // Add event listeners to the submit and reset buttons
+          submit_button.addEventListener('click', function () {
+            var table_id = submit_button.id.split('-')[1]
+            storeTableValues(table_id);
+
+            var dec_vars = parseInt(document.getElementById('dec_vars').value);
+            var slack_vars = parseInt(document.getElementById('slack_vars').value);
+            var excess_vars = parseInt(document.getElementById('excess_vars').value);
+
+            if (table_id == table_count) {
+              generateTable(dec_vars, slack_vars, excess_vars);
+            }
+          });
+
+          reset_button.addEventListener('click', function () {
+            // You can add reset functionality here if needed
+          });
+        } else {
           var rowNumberCell = document.createElement('td');
           rowNumberCell.textContent = row - 1;
           newRow.appendChild(rowNumberCell);
 
           var zCell = document.createElement('td');
-          zCell.innerHTML = '<input type="float" class="form-control" name="z" id="z" value = "0">';
+          if (table_count == 1) {
+            zCell.innerHTML = '<input type="float" class="form-control" name="z_' + i + '" id="z_' + i + '">';
+          } else {
+            var row_ops = tableValues[table_count - 1][row - 1];
+            var row_op = row_ops[row_ops.length - 1];
+            var lastTable = tableValues[table_count - 1];
+            var resultArray = [];
+
+            for (let r = 0; r < lastTable.length; r++) {
+              resultArray.push(lastTable[r][0]);
+            }
+            zCell.innerHTML = parseString(row_op, resultArray);
+          }
           newRow.appendChild(zCell);
 
           for (var i = 1; i <= n_vars; i++) {
             var variableCell = document.createElement('td');
-            variableCell.setAttribute('contenteditable', 'true');
-            // Inserting HTML input code in this td element
-            variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="">';
+
+            if (table_count == 1) {
+              variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="">';
+            } else {
+              var row_ops = tableValues[table_count - 1][row - 1];
+              var row_op = row_ops[row_ops.length - 1];
+              var lastTable = tableValues[table_count - 1];
+              var resultArray = [];
+              for (let r = 0; r < lastTable.length; r++) {
+                resultArray.push(lastTable[r][0]);
+              }
+              variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="' + parseString(row_op, resultArray) + '">';
+            }
             newRow.appendChild(variableCell);
           }
 
           var rhsCell = document.createElement('td');
-          // Inserting HTML input code in this td element
-          rhsCell.innerHTML = '<input type="float" class="form-control" name="rhs" id="rhs" value="0">';
+          if (table_count == 1) {
+            rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="">';
+          } else {
+            var row_ops = tableValues[table_count - 1][row - 1];
+            var row_op = row_ops[row_ops.length - 1];
+            var lastTable = tableValues[table_count - 1];
+            var resultArray = [];
+
+            for (let r = 0; r < lastTable.length; r++) {
+              resultArray.push(lastTable[r][0]);
+            }
+            rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="' + parseString(row_op, resultArray) + '">';
+          }
           newRow.appendChild(rhsCell);
 
           var operationsCell = document.createElement('td');
-          // Inserting HTML input code in this td element
-          operationsCell.innerHTML = '<input type="string" class="form-control" name="row_ops" id="row_ops">';
+          operationsCell.innerHTML = '<input type="text" class="form-control" name="row_ops_' + i + '" id="row_ops_' + i + '">';
           newRow.appendChild(operationsCell);
         }
         tbody.appendChild(newRow);
       }
-      var buttons = document.createElement('div');
-      buttons.setAttribute('class', 'form-group');
-      buttons.setAttribute('id', 'row-op-submit');
-      doc.appendChild(buttons);
-      var buttons_size = document.createElement('div');
-      buttons_size.setAttribute('class', 'col-md-offset-6 col-md-12');
-      buttons.appendChild(buttons_size);
-      var submit_button = document.createElement('input');
-      submit_button.setAttribute('type', 'submit');
-      submit_button.setAttribute('class', 'btn btn-success');
-      submit_button.setAttribute('value', 'Submit');
-      buttons_size.appendChild(submit_button);
-      var reset_button = document.createElement('input');
-      reset_button.setAttribute('type', 'reset');
-      reset_button.setAttribute('class', 'btn btn-danger');
-      reset_button.setAttribute('value', 'Reset');
-      buttons_size.appendChild(reset_button);
+    }
+
+    function storeTableValues(tableNumber) {
+      var tableId = `table-${tableNumber}`;
+      var table = document.getElementById(tableId);
+
+      if (!table) {
+        console.error(`Table with ID ${tableId} not found.`);
+        return;
+      }
+
+      var values = []; // Initialize an empty array to store table values
+
+      // Loop through the rows of the table
+      for (var row = 1; row < table.rows.length; row++) {
+        var rowData = []; // Initialize an empty array for each row
+
+        // Loop through the cells of the row
+        for (var col = 1; col < table.rows[row].cells.length; col++) {
+          var cell = table.rows[row].cells[col];
+
+          // Assuming input elements are always used, get the input value
+          var inputValue = cell.querySelector('input').value;
+
+          // Push the input value to the row data array
+          rowData.push(inputValue);
+        }
+
+        // Push the row data array to the values array
+        values.push(rowData);
+      }
+
+      // Now the 'values' array contains the input values organized as a list of lists
+      // console.log(`Table ${tableNumber} values:`, values);
+
+      // Stores table values for each iteration
+      tableValues[tableNumber] = values;
+      console.log(tableValues);
+    }
+
+    function parseString(x, column) {
+      // Split the row operation string by '+'
+      var rows = x.split('+');
+
+      // Initialize a variable to store the result
+      var result = 0;
+
+      // Iterate through the rows
+      for (var row of rows) {
+        var rowLabel = row.trim(); // Remove any leading/trailing whitespace
+
+        // Check if the rowLabel is in the format 'R#' where # is the row number
+        if (rowLabel.startsWith('R')) {
+          var rowNumber = parseInt(rowLabel.substring(1), 10);
+
+          // Ensure the row number is within a valid range
+          if (rowNumber >= 0 && rowNumber < column.length) {
+            result += column[rowNumber];
+          } else {
+            throw new Error(`Row label '${rowLabel}' is out of range.`);
+          }
+        } else {
+          throw an Error(`Invalid row label format: '${rowLabel}'`);
+        }
+      }
+
+      return result;
+    }
+
+    //function to fill table values
+    function fillTable(tableNumber) {
+      var tableId = `table-${tableNumber}`;
+      var table = document.getElementById(tableId);
+
+      if (!table) {
+        console.error(`Table with ID ${tableId} not found.`);
+        return;
+      }
+
+      var values = tableValues[tableNumber];
+
+      // Loop through the rows of the table
+      for (var row = 1; row < table.rows.length; row++) {
+        var rowData = values[row - 1];
+
+        // Loop through the cells of the row
+        for (var col = 1; col < table.rows[row].cells.length; col++) {
+          var cell = table.rows[row].cells[col];
+
+          // Assuming input elements are always used, set the input value
+          cell.querySelector('input').value = rowData[col - 1];
+        }
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -125,7 +278,7 @@
   </script>
 </head>
 
-<body id = "document-body">
+<body id="document-body">
   <h2>Simplex Method Calculator</h2>
 
   <div class="row">
@@ -135,19 +288,19 @@
         <div class="form-group">
           <label class="control-label col-xs-3" for="dec_vars">Decision Variables :</label>
           <div class="col-xs-7">
-            <input type="number" class="form-control" name="dec_vars" id="dec_vars" value = "0">
+            <input type="number" class="form-control" name="dec_vars" id="dec_vars" value="0">
           </div>
         </div>
         <div class="form-group">
           <label class="control-label col-xs-3" for="slack_vars">Slack Variables :</label>
           <div class="col-xs-7">
-            <input type="number" class="form-control" name="slack_vars" id="slack_vars" value = "0">
+            <input type="number" class="form-control" name="slack_vars" id="slack_vars" value="0">
           </div>
         </div>
-        <div class="form-group">
+        <div class"form-group">
           <label class="control-label col-xs-3" for="excess_vars">Excess Variables :</label>
           <div class="col-xs-7">
-            <input type="number" class="form-control" name="excess_vars" id="excess_vars" value = "0">
+            <input type="number" class="form-control" name="excess_vars" id="excess_vars" value="0">
           </div>
         </div>
         <div class="form-group">
