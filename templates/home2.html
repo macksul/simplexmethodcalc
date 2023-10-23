@@ -1,373 +1,452 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Simplex Method Calculator</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      // Initialize table_count to 0
+      var table_count = 0;
+      // Stores table values for each iteration
+      var tableValues = {};
 
-<head>
-  <title>Simplex Method Calculator</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
-  <script>
-    // Initialize table_count to 0
-    var table_count = 0;
-    // Stores table values for each iteration
-    var tableValues = {};
+      function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
+        // Increment the table_count
+        table_count++;
 
-    function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
-      // Increment the table_count
-      table_count++;
+        var n_rows = 1 + slack_vars + excess_vars;
+        var doc = document.getElementById("document-body");
+        var div_row = document.createElement("div");
+        div_row.classList.add("row");
+        doc.appendChild(div_row);
+        var div_size = document.createElement("div");
+        div_size.classList.add("col-md-12");
+        div_row.appendChild(div_size);
+        var table = document.createElement("table");
+        table.setAttribute("class", "table table-bordered");
+        table.setAttribute("id", `table-${table_count}`); // Set a unique table ID
+        div_size.appendChild(table);
+        var tbody = table.createTBody();
+        var thead = table.createTHead();
 
-      var n_rows = 1 + slack_vars + excess_vars;
-      var doc = document.getElementById('document-body');
-      var div_row = document.createElement('div');
-      div_row.classList.add('row');
-      doc.appendChild(div_row);
-      var div_size = document.createElement('div');
-      div_size.classList.add('col-md-12');
-      div_row.appendChild(div_size);
-      var table = document.createElement('table');
-      table.setAttribute('class', 'table table-bordered');
-      table.setAttribute('id', `table-${table_count}`); // Set a unique table ID
-      div_size.appendChild(table);
-      var tbody = table.createTBody();
-      var thead = table.createTHead();
+        var n_vars = dec_vars + slack_vars + excess_vars;
 
-      var n_vars = dec_vars + slack_vars + excess_vars;
+        for (var row = 0; row <= n_rows; row++) {
+          var newRow = document.createElement("tr");
 
-      for (var row = 0; row <= n_rows; row++) {
-        var newRow = document.createElement('tr');
+          if (row == 0) {
+            var rowNumberCell = document.createElement("td");
+            rowNumberCell.textContent = "Row";
+            newRow.appendChild(rowNumberCell);
 
-        if (row == 0) {
-          var rowNumberCell = document.createElement('td');
-          rowNumberCell.textContent = "Row";
-          newRow.appendChild(rowNumberCell);
+            var zCell = document.createElement("td");
+            zCell.textContent = "Z";
+            newRow.appendChild(zCell);
 
-          var zCell = document.createElement('td');
-          zCell.textContent = "Z";
-          newRow.appendChild(zCell);
-
-          for (var dec_var = 1; dec_var <= dec_vars; dec_var++) {
-            var dec_varCell = document.createElement('td');
-            dec_varCell.textContent = `x_${dec_var}`;
-            newRow.appendChild(dec_varCell);
-          }
-
-          for (var slack_var = 1; slack_var <= slack_vars; slack_var++) {
-            var slack_varCell = document.createElement('td');
-            slack_varCell.textContent = `s_${slack_var}`;
-            newRow.appendChild(slack_varCell);
-          }
-
-          for (var excess_var = 1; excess_var <= excess_vars; excess_var++) {
-            var excess_varCell = document.createElement('td');
-            excess_varCell.textContent = `e_${excess_var}`;
-            newRow.appendChild(excess_varCell);
-          }
-
-          var rhsCell = document.createElement('td');
-          rhsCell.textContent = "RHS";
-          newRow.appendChild(rhsCell);
-
-          var operationsCell = document.createElement('td');
-          operationsCell.textContent = "Row Operations";
-          newRow.appendChild(operationsCell);
-          thead.appendChild(newRow);
-
-          // Add submit and reset buttons with IDs that include table_count
-          var buttons = document.createElement('div');
-          buttons.setAttribute('class', 'form-group');
-          buttons.setAttribute('id', `row-op-submit-${table_count}`);
-          doc.appendChild(buttons);
-          var buttons_size = document.createElement('div');
-          buttons_size.setAttribute('class', 'col-md-offset-6 col-md-12');
-          buttons.appendChild(buttons_size);
-          var submit_button = document.createElement('input');
-          submit_button.setAttribute('type', 'submit');
-          submit_button.setAttribute('class', 'btn btn-success');
-          submit_button.setAttribute('value', 'Submit');
-          submit_button.setAttribute('id', `submit-${table_count}`);
-          buttons_size.appendChild(submit_button);
-          var reset_button = document.createElement('input');
-          reset_button.setAttribute('type', 'reset');
-          reset_button.setAttribute('class', 'btn btn-danger');
-          reset_button.setAttribute('value', 'Reset');
-          reset_button.setAttribute('id', `reset-${table_count}`);
-          buttons_size.appendChild(reset_button);
-
-          // Add event listeners to the submit and reset buttons
-          submit_button.addEventListener('click', function () {
-            var table_id = submit_button.id.split('-')[1]
-            storeTableValues(table_id);
-
-            var dec_vars = parseInt(document.getElementById('dec_vars').value);
-            var slack_vars = parseInt(document.getElementById('slack_vars').value);
-            var excess_vars = parseInt(document.getElementById('excess_vars').value);
-
-            if (table_id == table_count) { generateTable(dec_vars, slack_vars, excess_vars); }
-          });
-
-          reset_button.addEventListener('click', function () {
-            // You can add reset functionality here if needed
-          });
-        }
-
-        else {
-          var rowNumberCell = document.createElement('td');
-          rowNumberCell.textContent = row - 1;
-          newRow.appendChild(rowNumberCell);
-
-          var zCell = document.createElement('td');
-          if (table_count == 1) {
-            zCell.innerHTML = '<input type="float" class="form-control" name="z_' + i + '" id="z_' + i + '">';
-          }
-
-          else {
-            var row_ops = tableValues[table_count - 1][row - 1];
-            var row_op = row_ops[row_ops.length - 1]
-            var lastTable = tableValues[table_count - 1];
-            var resultArray = [];
-
-            for (let r = 0; r < lastTable.length; r++) {
-              resultArray.push(lastTable[r][0]);
+            for (var dec_var = 1; dec_var <= dec_vars; dec_var++) {
+              var dec_varCell = document.createElement("td");
+              dec_varCell.textContent = `x_${dec_var}`;
+              newRow.appendChild(dec_varCell);
             }
-            zCell.innerHTML = parseString(row_op, resultArray)
-            console.log(row_op)
-          }
-          newRow.appendChild(zCell);
 
-          for (var i = 1; i <= n_vars; i++) {
-            var variableCell = document.createElement('td');
+            for (var slack_var = 1; slack_var <= slack_vars; slack_var++) {
+              var slack_varCell = document.createElement("td");
+              slack_varCell.textContent = `s_${slack_var}`;
+              newRow.appendChild(slack_varCell);
+            }
 
+            for (var excess_var = 1; excess_var <= excess_vars; excess_var++) {
+              var excess_varCell = document.createElement("td");
+              excess_varCell.textContent = `e_${excess_var}`;
+              newRow.appendChild(excess_varCell);
+            }
+
+            var rhsCell = document.createElement("td");
+            rhsCell.textContent = "RHS";
+            newRow.appendChild(rhsCell);
+
+            var operationsCell = document.createElement("td");
+            operationsCell.textContent = "Row Operations";
+            newRow.appendChild(operationsCell);
+            thead.appendChild(newRow);
+
+            // Add submit and reset buttons with IDs that include table_count
+            var buttons = document.createElement("div");
+            buttons.setAttribute("class", "form-group");
+            buttons.setAttribute("id", `row-op-submit-${table_count}`);
+            doc.appendChild(buttons);
+            var buttons_size = document.createElement("div");
+            buttons_size.setAttribute("class", "col-md-offset-6 col-md-12");
+            buttons.appendChild(buttons_size);
+            var submit_button = document.createElement("input");
+            submit_button.setAttribute("type", "submit");
+            submit_button.setAttribute("class", "btn btn-success");
+            submit_button.setAttribute("value", "Submit");
+            submit_button.setAttribute("id", `submit-${table_count}`);
+            buttons_size.appendChild(submit_button);
+            var reset_button = document.createElement("input");
+            reset_button.setAttribute("type", "reset");
+            reset_button.setAttribute("class", "btn btn-danger");
+            reset_button.setAttribute("value", "Reset");
+            reset_button.setAttribute("id", `reset-${table_count}`);
+            buttons_size.appendChild(reset_button);
+
+            // Add event listeners to the submit and reset buttons
+            submit_button.addEventListener("click", function () {
+              var table_id = submit_button.id.split("-")[1];
+              storeTableValues(table_id);
+
+              var dec_vars = parseInt(
+                document.getElementById("dec_vars").value
+              );
+              var slack_vars = parseInt(
+                document.getElementById("slack_vars").value
+              );
+              var excess_vars = parseInt(
+                document.getElementById("excess_vars").value
+              );
+
+              if (table_id == table_count) {
+                generateTable(dec_vars, slack_vars, excess_vars);
+              }
+            });
+
+            reset_button.addEventListener("click", function () {
+              // You can add reset functionality here if needed
+            });
+          } else {
+            var rowNumberCell = document.createElement("td");
+            rowNumberCell.textContent = row - 1;
+            newRow.appendChild(rowNumberCell);
+
+            var zCell = document.createElement("td");
             if (table_count == 1) {
-              variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="">';
-            }
-
-            else {
+              zCell.innerHTML =
+                '<input type="float" class="form-control" name="z_' +
+                i +
+                '" id="z_' +
+                i +
+                '">';
+            } else {
               var row_ops = tableValues[table_count - 1][row - 1];
               var row_op = row_ops[row_ops.length - 1];
               var lastTable = tableValues[table_count - 1];
               var resultArray = [];
+
               for (let r = 0; r < lastTable.length; r++) {
-                resultArray.push(lastTable[r][i]);
+                resultArray.push(lastTable[r][0]);
               }
-              console.log(resultArray)
-              // Check with Dr. De Silva
-              variableCell.innerHTML = '<input type="text" class="form-control" name="variable_' + i + '" id="variable_' + i + '" value="' + parseString(row_op, resultArray) + '">';
+              zCell.innerHTML =
+                '<td type="float" name="z_' +
+                i +
+                '" id="z_' +
+                i +
+                '" value="' +
+                parseString(row_op, resultArray) +
+                '">' +
+                parseString(row_op, resultArray) +
+                "</td>";
+              console.log(row_op);
             }
-            newRow.appendChild(variableCell);
-          }
+            newRow.appendChild(zCell);
 
-          var rhsCell = document.createElement('td');
-          if (table_count == 1) {
-            rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="">';
-          }
+            for (var i = 1; i <= n_vars; i++) {
+              var variableCell = document.createElement("td");
 
-          else {
-            var row_ops = tableValues[table_count - 1][row - 1];
-            var row_op = row_ops[row_ops.length - 1];
-            var lastTable = tableValues[table_count - 1];
-            var resultArray = [];
-
-            for (let r = 0; r < lastTable.length; r++) {
-              resultArray.push(lastTable[r][lastTable[r].length - 2]);
+              if (table_count == 1) {
+                variableCell.innerHTML =
+                  '<input type="text" class="form-control" name="variable_' +
+                  i +
+                  '" id="variable_' +
+                  i +
+                  '" value="">';
+              } else {
+                var row_ops = tableValues[table_count - 1][row - 1];
+                var row_op = row_ops[row_ops.length - 1];
+                var lastTable = tableValues[table_count - 1];
+                var resultArray = [];
+                for (let r = 0; r < lastTable.length; r++) {
+                  resultArray.push(lastTable[r][i]);
+                }
+                console.log(resultArray);
+                // Check with Dr. De Silva
+                variableCell.innerHTML =
+                  '<td type="float" name="variable_' +
+                  i +
+                  '" id="variable_' +
+                  i +
+                  '" value="' +
+                  parseString(row_op, resultArray) +
+                  '">' +
+                  parseString(row_op, resultArray) +
+                  "</td>";
+              }
+              newRow.appendChild(variableCell);
             }
-            rhsCell.innerHTML = '<input type="text" class="form-control" name="rhs_' + i + '" id="rhs_' + i + '" value="' + parseString(row_op, resultArray) + '">';
+
+            var rhsCell = document.createElement("td");
+            if (table_count == 1) {
+              rhsCell.innerHTML =
+                '<input type="text" class="form-control" name="rhs_' +
+                i +
+                '" id="rhs_' +
+                i +
+                '" value="">';
+            } else {
+              var row_ops = tableValues[table_count - 1][row - 1];
+              var row_op = row_ops[row_ops.length - 1];
+              var lastTable = tableValues[table_count - 1];
+              var resultArray = [];
+
+              for (let r = 0; r < lastTable.length; r++) {
+                resultArray.push(lastTable[r][lastTable[r].length - 2]);
+              }
+              rhsCell.innerHTML =
+                '<td type="float" name="rhs_' +
+                i +
+                '" id="rhs_' +
+                i +
+                '" value="' +
+                parseString(row_op, resultArray) +
+                '">' +
+                parseString(row_op, resultArray) +
+                "</td>";
+            }
+            newRow.appendChild(rhsCell);
+
+            var operationsCell = document.createElement("td");
+            operationsCell.innerHTML =
+              '<input type="string" class="form-control" name="row_ops_' +
+              i +
+              '" id="row_ops_' +
+              i +
+              '">';
+            newRow.appendChild(operationsCell);
           }
-          newRow.appendChild(rhsCell);
-
-
-          var operationsCell = document.createElement('td');
-          operationsCell.innerHTML = '<input type="string" class="form-control" name="row_ops_' + i + '" id="row_ops_' + i + '">';
-          newRow.appendChild(operationsCell);
+          tbody.appendChild(newRow);
         }
-        tbody.appendChild(newRow);
-      }
-    }
-
-    function storeTableValues(tableNumber) {
-      var tableId = `table-${tableNumber}`;
-      var table = document.getElementById(tableId);
-
-      if (!table) {
-        console.error(`Table with ID ${tableId} not found.`);
-        return;
       }
 
-      var values = []; // Initialize an empty array to store table values
+      function storeTableValues(tableNumber) {
+        var tableId = `table-${tableNumber}`;
+        var table = document.getElementById(tableId);
 
-      // Loop through the rows of the table
-      for (var row = 1; row < table.rows.length; row++) {
-        var rowData = []; // Initialize an empty array for each row
-
-        // Loop through the cells of the row
-        for (var col = 1; col < table.rows[row].cells.length; col++) {
-          var cell = table.rows[row].cells[col];
-
-          // Assuming input elements are always used, get the input value
-          var inputValue = cell.querySelector('input').value;
-
-          // Push the input value to the row data array
-          rowData.push(inputValue);
+        if (!table) {
+          console.error(`Table with ID ${tableId} not found.`);
+          return;
         }
 
-        // Push the row data array to the values array
-        values.push(rowData);
+        var values = []; // Initialize an empty array to store table values
+
+        // Loop through the rows of the table
+        for (var row = 1; row < table.rows.length; row++) {
+          var rowData = []; // Initialize an empty array for each row
+
+          // Loop through the cells of the row
+          for (var col = 1; col < table.rows[row].cells.length; col++) {
+            var cell = table.rows[row].cells[col];
+
+            // Assuming input elements are always used, get the input value
+            if (tableNumber == 1) {
+              inputValue = cell.querySelector("input").value;
+            } else {
+              inputValue = cell.querySelector("td").value;
+            }
+
+            // Push the input value to the row data array
+            rowData.push(inputValue);
+          }
+
+          // Push the row data array to the values array
+          values.push(rowData);
+        }
+
+        // Now the 'values' array contains the input values organized as a list of lists
+        // console.log(`Table ${tableNumber} values:`, values);
+
+        // Stores table values for each iteration
+        tableValues[tableNumber] = values;
+        console.log(tableValues);
       }
 
-      // Now the 'values' array contains the input values organized as a list of lists
-      // console.log(`Table ${tableNumber} values:`, values);
+      function parseString(x, column) {
+        // First, determine if there is a coefficient by splitting the string x by '*'
+        var parts = x.split("*");
+        let coeff = 1.0; // If there is no coefficient, set it to 1.0
 
-      // Stores table values for each iteration
-      tableValues[tableNumber] = values;
-      console.log(tableValues)
-    }
-
-    function parseString(x, column) {
-      // First, determine if there is a coefficient by splitting the string x by '*'
-      var parts = x.split('*');
-      let coeff = 1.0; // If there is no coefficient, set it to 1.0
-
-      if (parts.length > 1) {
-        const coeffStr = parts[0].trim();
-        try {
-          coeff = parseFloat(coeffStr);
-        } catch (error) {
+        if (parts.length > 1) {
+          const coeffStr = parts[0].trim();
           try {
             coeff = eval(coeffStr);
           } catch (error) {
             throw new Error(`Invalid coefficient format: '${coeffStr}'`);
           }
         }
-      }
 
-      // Check if the first character is a negative symbol and adjust coeff if needed
-      if (parts[parts.length - 1][0] === '-') {
-        coeff *= -1; // Change the sign of the coefficient if there's a negative symbol
-      }
-
-      check_minus = parts[parts.length - 1].split(/^-/, '')
-      if (check_minus.length == 2 && check_minus[0] != '') {
-        throw new Error('Invalid operation format, please use addition.')
-      }
-
-      // Remove any negative symbols from the string
-      var rowString = parts[parts.length - 1].replace(/^-/, '');
-
-      // Split the rowString by '+' to identify the rows to be added
-      var rows = rowString.split('+');
-
-      // Initialize an array to store the actual rows from the column
-      var rowValues = [];
-
-      // Extract the rows from the column based on their labels
-      for (var row of rows) {
-        var rowLabel = row.trim(); // Remove any leading/trailing whitespace
-        if (rowLabel.startsWith('R')) {
-          var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
-          if (rowNumber >= 0 && rowNumber < column.length) {
-            rowValues.push(column[rowNumber]);
-          } else {
-            throw new Error(`Row label '${rowLabel}' is out of range.`);
-          }
+        // Check if the first character is a negative symbol and adjust coeff if needed
+        if (parts[parts.length - 1][0] === "-") {
+          coeff *= -1; // Change the sign of the coefficient if there's a negative symbol
+          var rowString = parts[parts.length - 1].slice(1);
         } else {
-          throw new Error(`Invalid row label format: '${rowLabel}'`);
+          var rowString = parts[parts.length - 1];
+        }
+
+        check_minus = parts[parts.length - 1].split(/^-/, "");
+        if (check_minus.length == 2 && check_minus[0] != "") {
+          throw new Error("Invalid operation format, please use addition.");
+        }
+
+        // Remove any negative symbols from the string
+        var rowString = parts[parts.length - 1].replace(/^-/, "");
+
+        // Split the rowString by '+' to identify the rows to be added
+        var rows = rowString.split("+");
+
+        // Initialize an array to store the actual rows from the column
+        var rowValues = [];
+
+        // Extract the rows from the column based on their labels
+        for (var row of rows) {
+          var rowLabel = row.trim(); // Remove any leading/trailing whitespace
+          if (rowLabel.startsWith("R")) {
+            var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
+            if (rowNumber >= 0 && rowNumber < column.length) {
+              rowValues.push(column[rowNumber]);
+            } else {
+              throw new Error(`Row label '${rowLabel}' is out of range.`);
+            }
+          } else {
+            throw new Error(`Invalid row label format: '${rowLabel}'`);
+          }
+        }
+
+        // Calculate the result based on the number of rows
+        let result;
+        if (rowValues.length === 1) {
+          result = coeff * rowValues[0];
+        } else if (rowValues.length === 2) {
+          result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
+        } else {
+          throw new Error("Invalid row operation format");
+        }
+
+        // Calculate the result based on the number of rows
+        if (rowValues.length === 1) {
+          result = coeff * rowValues[0];
+        } else if (rowValues.length === 2) {
+          result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
+        } else {
+          throw new Error("Invalid row operation format");
+        }
+
+        return result;
+      }
+
+      //function to fill table values
+      function fillTable(tableNumber) {
+        var tableId = `table-${tableNumber}`;
+        var table = document.getElementById(tableId);
+
+        if (!table) {
+          console.error(`Table with ID ${tableId} not found.`);
+          return;
+        }
+
+        var values = tableValues[tableNumber];
+
+        // Loop through the rows of the table
+        for (var row = 1; row < table.rows.length; row++) {
+          var rowData = values[row - 1];
+
+          // Loop through the cells of the row
+          for (var col = 1; col < table.rows[row].cells.length; col++) {
+            var cell = table.rows[row].cells[col];
+
+            // Assuming input elements are always used, set the input value
+            cell.querySelector("input").value = rowData[col - 1];
+          }
         }
       }
 
-      // Calculate the result based on the number of rows
-      let result;
-      if (rowValues.length === 1) {
-        result = coeff * rowValues[0];
-      } else if (rowValues.length === 2) {
-        result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
-      } else {
-        throw new Error('Invalid row operation format');
-      }
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("input-form")
+          .addEventListener("submit", function (event) {
+            event.preventDefault();
 
-      // Calculate the result based on the number of rows
-      if (rowValues.length === 1) {
-        result = coeff * rowValues[0];
-      } else if (rowValues.length === 2) {
-        result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
-      } else {
-        throw new Error('Invalid row operation format');
-      }
+            var dec_vars = parseInt(document.getElementById("dec_vars").value);
+            var slack_vars = parseInt(
+              document.getElementById("slack_vars").value
+            );
+            var excess_vars = parseInt(
+              document.getElementById("excess_vars").value
+            );
 
-      return result;
-    }
-
-    //function to fill table values
-    function fillTable(tableNumber) {
-      var tableId = `table-${tableNumber}`;
-      var table = document.getElementById(tableId);
-
-      if (!table) {
-        console.error(`Table with ID ${tableId} not found.`);
-        return;
-      }
-
-      var values = tableValues[tableNumber];
-
-      // Loop through the rows of the table
-      for (var row = 1; row < table.rows.length; row++) {
-        var rowData = values[row - 1];
-
-        // Loop through the cells of the row
-        for (var col = 1; col < table.rows[row].cells.length; col++) {
-          var cell = table.rows[row].cells[col];
-
-          // Assuming input elements are always used, set the input value
-          cell.querySelector('input').value = rowData[col - 1];
-        }
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('input-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var dec_vars = parseInt(document.getElementById('dec_vars').value);
-        var slack_vars = parseInt(document.getElementById('slack_vars').value);
-        var excess_vars = parseInt(document.getElementById('excess_vars').value);
-
-        generateTable(dec_vars, slack_vars, excess_vars);
+            generateTable(dec_vars, slack_vars, excess_vars);
+          });
       });
-    });
-  </script>
-</head>
+    </script>
+  </head>
 
-<body id="document-body">
-  <h2>Simplex Method Calculator</h2>
+  <body id="document-body">
+    <h2>Simplex Method Calculator</h2>
 
-  <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-      <form class="form-horizontal" id="input-form" method="post">
-        <div class="form-group">
-          <label class="control-label col-xs-3" for="dec_vars">Decision Variables :</label>
-          <div class="col-xs-7">
-            <input type="number" class="form-control" name="dec_vars" id="dec_vars" value="0">
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <form class="form-horizontal" id="input-form" method="post">
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="dec_vars"
+              >Decision Variables :</label
+            >
+            <div class="col-xs-7">
+              <input
+                type="number"
+                class="form-control"
+                name="dec_vars"
+                id="dec_vars"
+                value="0"
+              />
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label col-xs-3" for="slack_vars">Slack Variables :</label>
-          <div class="col-xs-7">
-            <input type="number" class="form-control" name="slack_vars" id="slack_vars" value="0">
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="slack_vars"
+              >Slack Variables :</label
+            >
+            <div class="col-xs-7">
+              <input
+                type="number"
+                class="form-control"
+                name="slack_vars"
+                id="slack_vars"
+                value="0"
+              />
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label col-xs-3" for="excess_vars">Excess Variables :</label>
-          <div class="col-xs-7">
-            <input type="number" class="form-control" name="excess_vars" id="excess_vars" value="0">
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="excess_vars"
+              >Excess Variables :</label
+            >
+            <div class="col-xs-7">
+              <input
+                type="number"
+                class="form-control"
+                name="excess_vars"
+                id="excess_vars"
+                value="0"
+              />
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-offset-3 col-xs-9">
-            <input type="submit" class="btn btn-success" value="Submit">
-            <input type="reset" class="btn btn-danger" value="Reset">
+          <div class="form-group">
+            <div class="col-xs-offset-3 col-xs-9">
+              <input type="submit" class="btn btn-success" value="Submit" />
+              <input type="reset" class="btn btn-danger" value="Reset" />
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
-
-</body>
-
+  </body>
 </html>
