@@ -87,20 +87,20 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       // Add event listeners to the submit and reset buttons
       submit_button.addEventListener("click", function () {
         var table_id = submit_button.id.split("-")[1];
-        storeTableValues(table_id);
+        if (table_id !== 0) {
+          storeTableValues(table_id);
+        }
 
-        var dec_vars = parseInt(
-          document.getElementById("dec_vars").value
-        );
-        var slack_vars = parseInt(
-          document.getElementById("slack_vars").value
-        );
+        var dec_vars = parseInt(document.getElementById("dec_vars").value);
+        var slack_vars = parseInt(document.getElementById("slack_vars").value);
         var excess_vars = parseInt(
           document.getElementById("excess_vars").value
         );
 
         if (table_id == table_count) {
           generateTable(dec_vars, slack_vars, excess_vars);
+        } else {
+          fillTable(parseInt(table_id) + 1);
         }
       });
 
@@ -243,8 +243,7 @@ function storeTableValues(tableNumber) {
       var inputValue;
       if (tableNumber == 1) {
         inputValue = cell.querySelector("input").value;
-      }
-      else if (col === table.rows[row].cells.length - 1) {
+      } else if (col === table.rows[row].cells.length - 1) {
         inputValue = cell.querySelector("input").value;
       } else {
         inputValue = cell.textContent;
@@ -338,19 +337,27 @@ function fillTable(tableNumber) {
     console.error(`Table with ID ${tableId} not found.`);
     return;
   }
+  console.log(tableValues);
 
   var values = tableValues[tableNumber];
+  console.log(values);
 
   // Loop through the rows of the table
   for (var row = 1; row < table.rows.length; row++) {
     var rowData = values[row - 1];
-
     // Loop through the cells of the row
     for (var col = 1; col < table.rows[row].cells.length; col++) {
       var cell = table.rows[row].cells[col];
 
       // Assuming input elements are always used, set the input value
-      cell.querySelector("input").value = rowData[col - 1];
+
+      if (tableNumber == 1) {
+        cell.querySelector("input").value = rowData[col - 1];
+      } else if (col === table.rows[row].cells.length - 1) {
+        cell.querySelector("input").value = rowData[col - 1];
+      } else {
+        cell.textContent = rowData[col - 1];
+      }
     }
   }
 }
@@ -362,13 +369,11 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
 
       var dec_vars = parseInt(document.getElementById("dec_vars").value);
-      var slack_vars = parseInt(
-        document.getElementById("slack_vars").value
-      );
-      var excess_vars = parseInt(
-        document.getElementById("excess_vars").value
-      );
+      var slack_vars = parseInt(document.getElementById("slack_vars").value);
+      var excess_vars = parseInt(document.getElementById("excess_vars").value);
 
-      generateTable(dec_vars, slack_vars, excess_vars);
+      if (table_count == 0) {
+        generateTable(dec_vars, slack_vars, excess_vars);
+      }
     });
 });
