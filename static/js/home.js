@@ -243,6 +243,9 @@ function storeTableValues(tableNumber) {
       var inputValue;
       if (tableNumber == 1) {
         inputValue = cell.querySelector("input").value;
+      }
+      else if (col === table.rows[row].cells.length - 1) {
+        inputValue = cell.querySelector("input").value;
       } else {
         inputValue = cell.textContent;
       }
