@@ -249,10 +249,11 @@
             var cell = table.rows[row].cells[col];
 
             // Assuming input elements are always used, get the input value
+            var inputValue;
             if (tableNumber == 1) {
               inputValue = cell.querySelector("input").value;
             } else {
-              inputValue = cell.querySelector("td").value;
+              inputValue = cell.textContent;
             }
 
             // Push the input value to the row data array
@@ -331,16 +332,6 @@
         } else {
           throw new Error("Invalid row operation format");
         }
-
-        // Calculate the result based on the number of rows
-        if (rowValues.length === 1) {
-          result = coeff * rowValues[0];
-        } else if (rowValues.length === 2) {
-          result = coeff * parseFloat(rowValues[0]) + parseFloat(rowValues[1]);
-        } else {
-          throw new Error("Invalid row operation format");
-        }
-
         return result;
       }
 
