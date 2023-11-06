@@ -102,6 +102,11 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
         } else {
           fillTable(parseInt(table_id) + 1);
         }
+
+        // Check if it's not the first table and fill the table with the updated values
+        if (table_id != 0) {
+          fillTable(table_id);
+        }
       });
 
       reset_button.addEventListener("click", function () {
@@ -162,7 +167,6 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
             resultArray.push(lastTable[r][i]);
           }
           console.log(resultArray);
-          // Check with Dr. De Silva
           variableCell.innerHTML =
             '<td type="float" name="variable_' +
             i +
@@ -263,6 +267,7 @@ function storeTableValues(tableNumber) {
   // Stores table values for each iteration
   tableValues[tableNumber] = values;
   console.log(tableValues);
+  fillTable(tableNumber);
 }
 
 function parseString(x, column) {
@@ -337,26 +342,25 @@ function fillTable(tableNumber) {
     console.error(`Table with ID ${tableId} not found.`);
     return;
   }
-  console.log(tableValues);
 
-  var values = tableValues[tableNumber];
-  console.log(values);
+  if (tableValues[tableNumber]) {
+    var values = tableValues[tableNumber];
 
-  // Loop through the rows of the table
-  for (var row = 1; row < table.rows.length; row++) {
-    var rowData = values[row - 1];
-    // Loop through the cells of the row
-    for (var col = 1; col < table.rows[row].cells.length; col++) {
-      var cell = table.rows[row].cells[col];
+    // Loop through the rows of the table
+    for (var row = 1; row < table.rows.length; row++) {
+      var rowData = values[row - 1];
+      // Loop through the cells of the row
+      for (var col = 1; col < table.rows[row].cells.length; col++) {
+        var cell = table.rows[row].cells[col];
 
-      // Assuming input elements are always used, set the input value
-
-      if (tableNumber == 1) {
-        cell.querySelector("input").value = rowData[col - 1];
-      } else if (col === table.rows[row].cells.length - 1) {
-        cell.querySelector("input").value = rowData[col - 1];
-      } else {
-        cell.textContent = rowData[col - 1];
+        // Assuming input elements are always used, set the input value
+        if (tableNumber == 1) {
+          cell.querySelector("input").value = rowData[col - 1];
+        } else if (col === table.rows[row].cells.length - 1) {
+          cell.querySelector("input").value = rowData[col - 1];
+        } else {
+          cell.textContent = rowData[col - 1];
+        }
       }
     }
   }
