@@ -100,11 +100,13 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
         if (table_id == table_count) {
           generateTable(dec_vars, slack_vars, excess_vars);
         } else {
+          storeTableValues(parseInt(table_id) + 1);
           fillTable(parseInt(table_id) + 1);
         }
 
         // Check if it's not the first table and fill the table with the updated values
         if (table_id != 0) {
+          storeTableValues(table_id);
           fillTable(table_id);
         }
       });
@@ -233,9 +235,10 @@ function storeTableValues(tableNumber) {
     return;
   }
 
-  var values = []; // Initialize an empty array to store table values
+  var values_current = []; // Initialize an empty array to store table values
+  var values_next = [];
 
-  // Loop through the rows of the table
+  // Loop through the rows of the curent table
   for (var row = 1; row < table.rows.length; row++) {
     var rowData = []; // Initialize an empty array for each row
 
@@ -258,16 +261,35 @@ function storeTableValues(tableNumber) {
     }
 
     // Push the row data array to the values array
-    values.push(rowData);
+    values_current.push(rowData);
   }
 
   // Now the 'values' array contains the input values organized as a list of lists
   // console.log(`Table ${tableNumber} values:`, values);
 
   // Stores table values for each iteration
-  tableValues[tableNumber] = values;
+  tableValues[tableNumber] = values_current;
+
+  // Loop through the rows of the curent table
+  for (var row = 0; row < table.rows.length - 1; row++) {
+    var rowData = []; // Initialize an empty array for each row
+    var num_cols = tableValues[tableNumber][row].length;
+    var row_op = tableValues[tableNumber][row][num_cols - 1];
+
+    for (var col = 0; col < num_cols - 1; col++) {
+      var colData = [];
+      for (var inner_row = 0; inner_row < table.rows.length - 1; inner_row++) {
+        colData.push(tableValues[tableNumber][inner_row][col]);
+      }
+      var inputValue = parseString(row_op, colData);
+      // Push the input value to the row data array
+      rowData.push(inputValue);
+    }
+    // Push the row data array to the values array
+    values_next.push(rowData);
+  }
+  tableValues[parseInt(tableNumber) + 1] = values_next;
   console.log(tableValues);
-  fillTable(tableNumber);
 }
 
 function parseString(x, column) {
