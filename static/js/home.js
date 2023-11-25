@@ -123,9 +123,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       if (table_count == 1) {
         zCell.innerHTML =
           '<input type="float" class="form-control" name="z_' +
-          i +
+          row +
           '" id="z_' +
-          i +
+          row +
           '">';
       } else {
         var row_ops = tableValues[table_count - 1][row - 1];
@@ -133,14 +133,14 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
         var lastTable = tableValues[table_count - 1];
         var resultArray = [];
 
-        for (let r = 0; r < lastTable.length; r++) {
-          resultArray.push(lastTable[r][0]);
+        for (let i = 0; i < lastTable.length; i++) {
+          resultArray.push(lastTable[i][0]);
         }
         zCell.innerHTML =
           '<td type="float" name="z_' +
-          i +
+          row +
           '" id="z_' +
-          i +
+          row +
           '" value="' +
           parseString(row_op, resultArray) +
           '">' +
@@ -187,9 +187,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       if (table_count == 1) {
         rhsCell.innerHTML =
           '<input type="text" class="form-control" name="rhs_' +
-          i +
+          row +
           '" id="rhs_' +
-          i +
+          row +
           '" value="">';
       } else {
         var row_ops = tableValues[table_count - 1][row - 1];
@@ -202,9 +202,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
         }
         rhsCell.innerHTML =
           '<td type="float" name="rhs_' +
-          i +
+          row +
           '" id="rhs_' +
-          i +
+          row +
           '" value="' +
           parseString(row_op, resultArray) +
           '">' +
@@ -216,9 +216,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       var operationsCell = document.createElement("td");
       operationsCell.innerHTML =
         '<input type="string" class="form-control" name="row_ops_' +
-        i +
+        row +
         '" id="row_ops_' +
-        i +
+        row +
         '">';
       newRow.appendChild(operationsCell);
     }
