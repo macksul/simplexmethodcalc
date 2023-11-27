@@ -1,7 +1,24 @@
 // Initialize table_count to 0
 var table_count = 0;
+
 // Stores table values for each iteration
 var tableValues = {};
+
+function deleteTable(tableNumber) {
+  var tableId = `table-${tableNumber}`;
+  var table = document.getElementById(tableId);
+  if (!table) {
+    console.error(`Table with ID ${tableId} not found.`);
+    return;
+  }
+  table.remove();
+  table_count--;
+
+  // delete submit and reset buttons
+  var submitId = `row-op-submit-${tableNumber}`;
+  var submit = document.getElementById(submitId);
+  submit.remove();
+}
 
 function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
   // Increment the table_count
@@ -85,23 +102,34 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       buttons_size.appendChild(reset_button);
 
       // Add event listeners to the submit and reset buttons
+      // Submit button Event Listener
       submit_button.addEventListener("click", function () {
+        // Check if last table. If not, delete all tables that come after it
         var table_id = submit_button.id.split("-")[1];
+        if (table_id != table_count) {
+          for (var i = table_count; i > table_id; i--) {
+            deleteTable(i);
+          }
+        }
+
+        // Check if it's not the first table and fill the table with the updated values
         if (table_id !== 0) {
           storeTableValues(table_id);
         }
 
+        // Get the values of the decision variables, slack variables, and excess variables
         var dec_vars = parseInt(document.getElementById("dec_vars").value);
         var slack_vars = parseInt(document.getElementById("slack_vars").value);
         var excess_vars = parseInt(
           document.getElementById("excess_vars").value
         );
 
+        // Check if it's the last table and generate a new table
         if (table_id == table_count) {
           generateTable(dec_vars, slack_vars, excess_vars);
         } else {
-          storeTableValues(parseInt(table_id) + 1);
-          fillTable(parseInt(table_id) + 1);
+          storeTableValues(table_id + 1);
+          fillTable(table_id + 1);
         }
 
         // Check if it's not the first table and fill the table with the updated values
@@ -187,9 +215,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       if (table_count == 1) {
         rhsCell.innerHTML =
           '<input type="text" class="form-control" name="rhs_' +
-          row +
+          i +
           '" id="rhs_' +
-          row +
+          i +
           '" value="">';
       } else {
         var row_ops = tableValues[table_count - 1][row - 1];
@@ -216,9 +244,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       var operationsCell = document.createElement("td");
       operationsCell.innerHTML =
         '<input type="string" class="form-control" name="row_ops_' +
-        row +
+        i +
         '" id="row_ops_' +
-        row +
+        i +
         '">';
       newRow.appendChild(operationsCell);
     }
@@ -229,23 +257,18 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
 function storeTableValues(tableNumber) {
   var tableId = `table-${tableNumber}`;
   var table = document.getElementById(tableId);
-
   if (!table) {
     console.error(`Table with ID ${tableId} not found.`);
     return;
   }
-
   var values_current = []; // Initialize an empty array to store table values
   var values_next = [];
-
   // Loop through the rows of the curent table
   for (var row = 1; row < table.rows.length; row++) {
     var rowData = []; // Initialize an empty array for each row
-
     // Loop through the cells of the row
     for (var col = 1; col < table.rows[row].cells.length; col++) {
       var cell = table.rows[row].cells[col];
-
       // Assuming input elements are always used, get the input value
       var inputValue;
       if (tableNumber == 1) {
@@ -255,27 +278,21 @@ function storeTableValues(tableNumber) {
       } else {
         inputValue = cell.textContent;
       }
-
       // Push the input value to the row data array
       rowData.push(inputValue);
     }
-
     // Push the row data array to the values array
     values_current.push(rowData);
   }
-
   // Now the 'values' array contains the input values organized as a list of lists
   // console.log(`Table ${tableNumber} values:`, values);
-
   // Stores table values for each iteration
   tableValues[tableNumber] = values_current;
-
   // Loop through the rows of the curent table
   for (var row = 0; row < table.rows.length - 1; row++) {
     var rowData = []; // Initialize an empty array for each row
     var num_cols = tableValues[tableNumber][row].length;
     var row_op = tableValues[tableNumber][row][num_cols - 1];
-
     for (var col = 0; col < num_cols - 1; col++) {
       var colData = [];
       for (var inner_row = 0; inner_row < table.rows.length - 1; inner_row++) {
