@@ -140,6 +140,28 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       });
 
       reset_button.addEventListener("click", function () {
+        var table_id = reset_button.id.split("-")[1];
+        for (var i = table_count; i >= table_id; i--) {
+          deleteTable(i);
+        }
+
+        // Check if it's not the first table and fill the table with the updated values
+        if (table_id !== 0) {
+          storeTableValues(parseInt(table_id) - 1);
+        }
+
+        // Get the values of the decision variables, slack variables, and excess variables
+        var dec_vars = parseInt(document.getElementById("dec_vars").value);
+        var slack_vars = parseInt(document.getElementById("slack_vars").value);
+        var excess_vars = parseInt(
+          document.getElementById("excess_vars").value
+        );
+
+        // Check if it's the last table and generate a new table
+        if (parseInt(table_id) - 1 == table_count) {
+          generateTable(dec_vars, slack_vars, excess_vars);
+        }
+
         // You can add reset functionality here if needed
       });
     } else {
@@ -417,6 +439,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (table_count == 0) {
         generateTable(dec_vars, slack_vars, excess_vars);
+      } else {
+        for (var i = table_count; i > 0; i--) {
+          deleteTable(i);
+        }
+        generateTable(dec_vars, slack_vars, excess_vars);
+      }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("input-form")
+    .addEventListener("reset", function (event) {
+      event.preventDefault();
+
+      var dec_vars = parseInt(document.getElementById("dec_vars").value);
+      var slack_vars = parseInt(document.getElementById("slack_vars").value);
+      var excess_vars = parseInt(document.getElementById("excess_vars").value);
+
+      for (var i = table_count; i > 0; i--) {
+        deleteTable(i);
       }
     });
 });
