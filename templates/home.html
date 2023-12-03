@@ -27,6 +27,7 @@
                 name="dec_vars"
                 id="dec_vars"
                 value="0"
+                min="0"
               />
             </div>
           </div>
@@ -41,6 +42,7 @@
                 name="slack_vars"
                 id="slack_vars"
                 value="0"
+                min="0"
               />
             </div>
           </div>
@@ -55,6 +57,7 @@
                 name="excess_vars"
                 id="excess_vars"
                 value="0"
+                min="0"
               />
             </div>
           </div>
@@ -77,5 +80,13 @@
         </form>
       </div>
     </div>
+
+    <script>
+      function resetForm() {
+        document.getElementById("dec_vars").value = "0";
+        document.getElementById("slack_vars").value = "0";
+        document.getElementById("excess_vars").value = "0";
+      }
+    </script>
   </body>
 </html>

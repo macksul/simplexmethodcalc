@@ -454,12 +454,14 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("reset", function (event) {
       event.preventDefault();
 
-      var dec_vars = parseInt(document.getElementById("dec_vars").value);
-      var slack_vars = parseInt(document.getElementById("slack_vars").value);
-      var excess_vars = parseInt(document.getElementById("excess_vars").value);
-
+      document.getElementById("dec_vars").value = "0";
+      document.getElementById("slack_vars").value = "0";
+      document.getElementById("excess_vars").value = "0";
       for (var i = table_count; i > 0; i--) {
         deleteTable(i);
       }
     });
 });
+
+// Change input types for home.html for negatives in flask app
+// When hitting reset button, reset values to 0
