@@ -1,4 +1,4 @@
-README: Linear Programming Table Generator Flask App
+Linear Programming Table Generator Flask App
 Overview
 This Flask web application is designed to generate and manipulate tables for linear programming problems. The application dynamically creates tables based on the user's input for decision variables, slack variables, and excess variables. It supports row operations such as addition and subtraction to perform the simplex method iterations.
 
