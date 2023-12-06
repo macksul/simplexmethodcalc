@@ -32,18 +32,30 @@ Error messages are displayed for invalid input or operations.
 
 To run the Flask app locally, follow these steps:
 
-Clone the repository:
+1. Clone the repository:
 
+```python
 git clone https://github.com/your-username/linear-programming-app.git
-Navigate to the project directory:
+```
 
+2. Navigate to the project directory:
+
+```python
 cd linear-programming-app
-Install dependencies:
+```
 
+3. Install dependencies:
+
+```python
 pip install -r requirements.txt
-Run the Flask app:
+```
 
+4. Run the Flask app:
+
+```python
 python app.py
+```
+
 Open your web browser and go to http://localhost:5000 to access the application.
 
 ## Usage
