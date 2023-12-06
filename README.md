@@ -6,13 +6,13 @@ This Flask web application is designed to generate and manipulate tables for lin
 
 ## Features
 
-## 1. Dynamic Table Generation:
+### 1. Dynamic Table Generation:
 
 The app dynamically generates tables based on user input for decision variables, slack variables, and excess variables.
 Each table represents an iteration in the simplex method.
 
 
-## 2. Row Operations:
+### 2. Row Operations:
 
 Users can perform row operations (addition and subtraction) to manipulate the table values.
 The application supports the use of decision variables, slack variables, and excess variables in row operations.
@@ -22,7 +22,7 @@ Users can submit the current table and proceed to the next iteration.
 The reset button clears all tables and allows users to start afresh.
 
 
-## 3. Validation:
+### 3. Validation:
 
 The app includes validation checks to ensure that tables are generated and manipulated correctly.
 Error messages are displayed for invalid input or operations.
