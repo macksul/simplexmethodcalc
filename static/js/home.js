@@ -30,7 +30,6 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
   div_row.classList.add("row");
   doc.appendChild(div_row);
   var div_size = document.createElement("div");
-  div_size.classList.add("col-md-12");
   div_row.appendChild(div_size);
   var table = document.createElement("table");
   table.setAttribute("class", "table table-bordered");
@@ -84,9 +83,9 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
       var buttons = document.createElement("div");
       buttons.setAttribute("class", "form-group");
       buttons.setAttribute("id", `row-op-submit-${table_count}`);
-      doc.appendChild(buttons);
+      div_row.appendChild(buttons);
       var buttons_size = document.createElement("div");
-      buttons_size.setAttribute("class", "col-md-offset-6 col-md-12");
+      buttons_size.setAttribute("class", "submit-buttons");
       buttons.appendChild(buttons_size);
       var submit_button = document.createElement("input");
       submit_button.setAttribute("type", "submit");
@@ -457,11 +456,9 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("dec_vars").value = "0";
       document.getElementById("slack_vars").value = "0";
       document.getElementById("excess_vars").value = "0";
+
       for (var i = table_count; i > 0; i--) {
         deleteTable(i);
       }
     });
 });
-
-// Change input types for home.html for negatives in flask app
-// When hitting reset button, reset values to 0

@@ -2,67 +2,64 @@
 <html>
   <head>
     <title>Simplex Method Calculator</title>
-    <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="static/css/home.css" rel="stylesheet" />
     <script src="../static/js/home.js"></script>
   </head>
 
-  <body id="document-body">
-    <h2>Simplex Method Calculator</h2>
+  <body id="document-body" class="css-selector">
+    <div class="container">
+      <h2>Simplex Method Calculator</h2>
 
-    <div class="row">
-      <div class="col-md-4"></div>
-      <div class="col-md-4">
-        <form class="form-horizontal" id="input-form" method="post">
-          <div class="form-group">
-            <label class="control-label col-xs-3" for="dec_vars"
-              >Decision Variables :</label
-            >
-            <div class="col-xs-7">
-              <input
-                type="number"
-                class="form-control"
-                name="dec_vars"
-                id="dec_vars"
-                value="0"
-                min="0"
-              />
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <form class="form-horizontal" id="input-form" method="post">
+            <div class="form-group">
+              <label class="control-label" for="dec_vars"
+                >Decision Variables:</label
+              >
+              <div class="col-xs-7">
+                <input
+                  type="number"
+                  class="form-control font-size-medium"
+                  name="dec_vars"
+                  id="dec_vars"
+                  value="0"
+                  min="0"
+                />
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-xs-3" for="slack_vars"
-              >Slack Variables :</label
-            >
-            <div class="col-xs-7">
-              <input
-                type="number"
-                class="form-control"
-                name="slack_vars"
-                id="slack_vars"
-                value="0"
-                min="0"
-              />
+            <div class="form-group">
+              <label class="control-label" for="slack_vars"
+                >Slack Variables:</label
+              >
+              <div class="col-xs-7">
+                <input
+                  type="number"
+                  class="form-control font-size-medium"
+                  name="slack_vars"
+                  id="slack_vars"
+                  value="0"
+                  min="0"
+                />
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-xs-3" for="excess_vars"
-              >Excess Variables :</label
-            >
-            <div class="col-xs-7">
-              <input
-                type="number"
-                class="form-control"
-                name="excess_vars"
-                id="excess_vars"
-                value="0"
-                min="0"
-              />
+            <div class="form-group">
+              <label class="control-label" for="excess_vars"
+                >Excess Variables:</label
+              >
+              <div class="col-xs-7">
+                <input
+                  type="number"
+                  class="form-control font-size-medium"
+                  name="excess_vars"
+                  id="excess_vars"
+                  value="0"
+                  min="0"
+                />
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-offset-3 col-xs-9">
+            <div class="form-group submit-buttons">
               <input
                 type="submit"
                 class="btn btn-success"
@@ -74,14 +71,16 @@
                 class="btn btn-danger"
                 value="Reset"
                 id="reset-0"
+                onclick="resetForm()"
               />
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
 
     <script>
+      // Additional JavaScript functionality can be added here
       function resetForm() {
         document.getElementById("dec_vars").value = "0";
         document.getElementById("slack_vars").value = "0";
