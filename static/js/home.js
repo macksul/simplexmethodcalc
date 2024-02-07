@@ -54,19 +54,19 @@ function generateTable(dec_vars = 0, slack_vars = 0, excess_vars = 0) {
 
       for (var dec_var = 1; dec_var <= dec_vars; dec_var++) {
         var dec_varCell = document.createElement("td");
-        dec_varCell.textContent = `x_${dec_var}`;
+        dec_varCell.innerHTML = `x<sub>${dec_var}</sub>`;
         newRow.appendChild(dec_varCell);
       }
 
       for (var slack_var = 1; slack_var <= slack_vars; slack_var++) {
         var slack_varCell = document.createElement("td");
-        slack_varCell.textContent = `s_${slack_var}`;
+        slack_varCell.innerHTML = `s<sub>${slack_var}</sub>`;
         newRow.appendChild(slack_varCell);
       }
 
       for (var excess_var = 1; excess_var <= excess_vars; excess_var++) {
         var excess_varCell = document.createElement("td");
-        excess_varCell.textContent = `e_${excess_var}`;
+        excess_varCell.innerHTML = `e<sub>${excess_var}</sub>`;
         newRow.appendChild(excess_varCell);
       }
 
