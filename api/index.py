@@ -9,7 +9,8 @@ app = Flask(__name__)
 # Create route for home page
 @app.route('/')
 def home():
-    return render_template('home.html')
+    # return render_template('home.html')
+    return "testing"
 
 @app.route('/', methods=['POST'])
 def get_tableau_from_user():

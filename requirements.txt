@@ -1,5 +1,5 @@
-# pip install -r requirements.txt
-
 Flask
 numpy
 pandas
+
+# pip install -r requirements.txt
