@@ -114,6 +114,15 @@ tr {
   }
 }
 
+/* Example text adjustments */
+#example-text {
+  float: right;
+  width: 40%;
+  text-align: right;
+  margin-top: -50px; /* Adjust as needed to align properly with the row operations */
+  margin-right: -50%;
+}
+
 /* Animated gradient by https://www.gradient-animator.com/*/
 .css-selector {
   background: linear-gradient(26deg, #ffc9c9, #c6d1ff, #ffe9cc);

@@ -369,7 +369,8 @@ function parseString(x, column) {
   // Extract the rows from the column based on their labels
   for (var row of rows) {
     var rowLabel = row.trim(); // Remove any leading/trailing whitespace
-    if (rowLabel.startsWith("R")) {
+    if (rowLabel.startsWith("R") || rowLabel.startsWith("r")) {
+      // Updated to allow 'r' or 'R' for row operations
       var rowNumber = parseInt(rowLabel.substring(1), 10); // Extract the row number (assuming format 'R#')
       if (rowNumber >= 0 && rowNumber < column.length) {
         rowValues.push(column[rowNumber]);
