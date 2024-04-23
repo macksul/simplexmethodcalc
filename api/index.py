@@ -14,8 +14,11 @@ def home():
 @app.route('/', methods=['POST'])
 def get_tableau_from_user():
     return render_template('home.html')
+
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template('home.html')
     
 # Run app
 if __name__ == '__main__':
     app.run(debug=True)
-
